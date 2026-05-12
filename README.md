@@ -38,7 +38,7 @@ Este núcleo foi desenvolvido e testado especificamente para **L2J Mobius Essenc
 
 ### ☕ Suporte e Doações
 Este é um projeto de código aberto mantido pela MiaCodeWeb. Estou sempre trabalhando para melhorar e adicionar novos recursos. Se este projeto ajudou o seu servidor, considere fazer uma doação para manter o desenvolvimento ativo!
-* **Doe via PayPal:** [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://paypal.me/miacodeweb
+* **Doe via PayPal:** https://paypal.me/miacodeweb
 * **Precisa de configurações privadas ou mods exclusivos?** Envie-me uma mensagem privada (PM) no fórum ou GitHub para contratação de serviços freelancer.
 
 ---
@@ -73,7 +73,7 @@ This core was built and tested specifically for **L2J Mobius Essence (RoseVain)*
 
 ### ☕ Support & Donations
 This is an open-source project managed by MiaCodeWeb. I am constantly working to improve it. If this project helped your server, please consider donating to keep the development active!
-* **Donate via PayPal:** [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://paypal.me/miacodeweb
+* **Donate via PayPal:** https://paypal.me/miacodeweb
 * **Need private configurations or exclusive mods?** Send me a PM on the forum or GitHub to hire my freelance development services.
 
 ---
@@ -108,5 +108,5 @@ Este núcleo fue desarrollado y probado específicamente para **L2J Mobius Essen
 
 ### ☕ Soporte y Donaciones
 Este es un proyecto de código abierto mantenido por MiaCodeWeb. Siempre estoy trabajando para mejorarlo. Si este proyecto ayudó a tu servidor, ¡considera hacer una donación para mantener el desarrollo activo!
-* **Donar vía PayPal:** [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://paypal.me/miacodeweb
+* **Donar vía PayPal:** https://paypal.me/miacodeweb
 * **¿Necesitas configuraciones privadas o mods exclusivos?** Envíame un mensaje privado (PM) en el foro o en GitHub para contratar mis servicios como desarrollador freelance.
