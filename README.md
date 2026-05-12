@@ -19,10 +19,6 @@ Um sistema avançado para criar **jogadores phantom com Inteligência Artificial
 * **Chat IA Dinâmico:** Integração nativa com Google Gemini 1.5. Os phantoms conversam no chat geral e respondem a mensagens privadas (`.pm`) usando gírias gamers.
 * **Gerenciamento de Inventário:** Auto-limpeza de itens inúteis e auto-abastecimento de Soulshots/Spiritshots.
 
-### 🛠️ Compatibility & Premium Adaptations
-Este núcleo foi desenvolvido e testado especificamente para **L2J Mobius Essence (RoseVain)**, otimizado para funcionar com geodata básica de Essence.
-> **Adaptações Premium:** O código foi desenhado para ser universal. Trabalho de maneira particular adaptando e configurando este sistema para **qualquer outro servidor ou crônica** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.). Entre em contato para orçamentos!
-
 ### 📥 Installation (Instalação)
 1. Copie o arquivo `PhantomManager.java` para o diretório de scripts customizados do seu servidor (`data/scripts/custom/PhantomManager/`).
 2. Coloque o arquivo `PhantomPlayers.xml` na pasta `config/Custom/`.
@@ -30,16 +26,23 @@ Este núcleo foi desenvolvido e testado especificamente para **L2J Mobius Essenc
 4. Reinicie o servidor ou dê reload nos scripts.
 
 ### 💻 Commands (Comandos)
-* **`.pstart`** - Inicia o motor, carrega e spawna os phantoms nas cidades.
-* **`.pstop`** - Para o sistema e remove os phantoms do mundo.
+* **`.pstart`** / **`.pstop`** - Inicia ou para o sistema e os phantoms.
 * **`.pmenu`** - Abre o Painel de Controle HTML do Admin no jogo.
 * **`.pm [Nome] [Mensagem]`** - Envia uma mensagem privada para um phantom para testar a IA.
 * **`.pgo [Nome]` / `.pbring [Nome]` / `.pkill [Nome]`** - Comandos rápidos de controle de GM.
 
+### 🛠️ Adaptações Sob Medida & Contato
+Este núcleo gratuito foi desenvolvido especificamente para **L2J Mobius Essence (RoseVain)**. No entanto, o código foi desenhado para ser universal. 
+Trabalho de maneira particular adaptando e configurando este sistema para **qualquer outro servidor, emulador ou crônica** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.).
+
+**Faço orçamentos totalmente gratuitos!** Se você precisa deste sistema adaptado para o seu servidor, ou de configurações e mods exclusivos:
+* ✉️ **Email:** [contacto@miacodeweb.com](mailto:contacto@miacodeweb.com)
+* 🌐 **Chat ao vivo:** Fale comigo diretamente pelo chat em nosso site [miacodeweb.com](https://miacodeweb.com)
+
 ### ☕ Suporte e Doações
-Este é um projeto de código aberto mantido pela MiaCodeWeb. Estou sempre trabalhando para melhorar e adicionar novos recursos. Se este projeto ajudou o seu servidor, considere fazer uma doação para manter o desenvolvimento ativo!
-* **Doe via PayPal:** https://paypal.me/miacodeweb
-* **Precisa de configurações privadas ou mods exclusivos?** Envie-me uma mensagem privada (PM) no fórum ou GitHub para contratação de serviços freelancer.
+Este é um projeto mantido pela MiaCodeWeb. Se este projeto ajudou o seu servidor, considere fazer uma doação para manter o desenvolvimento ativo!
+
+https://paypal.me/miacodeweb
 
 ---
 
@@ -54,10 +57,6 @@ An advanced system to create **Artificial Intelligence (AI) phantom players** th
 * **Dynamic AI Chat:** Native integration with Google Gemini 1.5. Phantoms chat publicly and reply to private messages (`.pm`) using natural gamer slang.
 * **Inventory Management:** Auto-cleans garbage drops to prevent weight limits and auto-generates Soulshots/Spiritshots.
 
-### 🛠️ Compatibility & Premium Adaptations
-This core was built and tested specifically for **L2J Mobius Essence (RoseVain)**, optimized to work with basic Essence geodata.
-> **Premium Adaptations:** The logic is universal. I work privately to adapt and configure this system for **any other server pack or chronicle** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.). Contact me to get a quote!
-
 ### 📥 Installation
 1. Drop `PhantomManager.java` into your custom scripts folder (`data/scripts/custom/PhantomManager/`).
 2. Place `PhantomPlayers.xml` inside `config/Custom/`.
@@ -65,16 +64,23 @@ This core was built and tested specifically for **L2J Mobius Essence (RoseVain)*
 4. Restart the server or reload scripts.
 
 ### 💻 Commands
-* **`.pstart`** - Starts the engine, loads and spawns phantoms in towns.
-* **`.pstop`** - Stops the system and deletes phantoms from the world.
+* **`.pstart`** / **`.pstop`** - Starts or stops the system and phantoms.
 * **`.pmenu`** - Opens the In-Game Admin HTML Control Panel.
 * **`.pm [Name] [Message]`** - Send a private message to a phantom to test the AI.
 * **`.pgo [Name]` / `.pbring [Name]` / `.pkill [Name]`** - Quick GM control commands.
 
+### 🛠️ Custom Adaptations & Contact
+This free core was built specifically for **L2J Mobius Essence (RoseVain)**. However, the logic is universal.
+I work privately to adapt and configure this system for **any other server pack or chronicle** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.).
+
+**Get a free quote today!** If you need this system adapted to your server, or if you need private configurations and exclusive mods:
+* ✉️ **Email:** [contacto@miacodeweb.com](mailto:contacto@miacodeweb.com)
+* 🌐 **Live Chat:** Reach out directly via the live chat on our website [miacodeweb.com](https://miacodeweb.com)
+
 ### ☕ Support & Donations
-This is an open-source project managed by MiaCodeWeb. I am constantly working to improve it. If this project helped your server, please consider donating to keep the development active!
-* **Donate via PayPal:** https://paypal.me/miacodeweb
-* **Need private configurations or exclusive mods?** Send me a PM on the forum or GitHub to hire my freelance development services.
+This project is managed by MiaCodeWeb. If this project helped your server, please consider donating to keep the development active!
+
+https://paypal.me/miacodeweb
 
 ---
 
@@ -89,10 +95,6 @@ Un sistema avanzado para crear **jugadores phantom con Inteligencia Artificial (
 * **Chat IA Dinámico:** Integración nativa con Google Gemini 1.5. Los phantoms hablan por chat general y responden mensajes privados (`.pm`) usando jerga gamer.
 * **Gestión de Inventario:** Auto-limpieza de basura del inventario y auto-abastecimiento de Soulshots/Spiritshots.
 
-### 🛠️ Compatibility & Premium Adaptations
-Este núcleo fue desarrollado y probado específicamente para **L2J Mobius Essence (RoseVain)**, optimizado para trabajar con la geodata básica de Essence.
-> **Adaptaciones Premium:** El código fue diseñado de forma universal. Trabajo de forma particular adaptando y configurando este sistema para **cualquier otro servidor o crónica** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.). ¡Contáctame para solicitar un presupuesto!
-
 ### 📥 Installation (Instalación)
 1. Copia el archivo `PhantomManager.java` a la carpeta de scripts custom de tu servidor (`data/scripts/custom/PhantomManager/`).
 2. Coloca el archivo `PhantomPlayers.xml` dentro de `config/Custom/`.
@@ -100,13 +102,20 @@ Este núcleo fue desarrollado y probado específicamente para **L2J Mobius Essen
 4. Reinicia el servidor o recarga los scripts.
 
 ### 💻 Commands (Comandos)
-* **`.pstart`** - Inicia el motor, carga y spawnea los phantoms en las ciudades.
-* **`.pstop`** - Detiene el sistema y elimina a los phantoms del mundo.
+* **`.pstart`** / **`.pstop`** - Inicia o detiene el sistema de phantoms.
 * **`.pmenu`** - Abre el Panel de Control HTML de Administrador dentro del juego.
 * **`.pm [Nombre] [Mensaje]`** - Envía un mensaje privado a un phantom para poner a prueba la IA.
 * **`.pgo [Nombre]` / `.pbring [Nombre]` / `.pkill [Nombre]`** - Comandos rápidos de control de GM.
 
+### 🛠️ Adaptaciones a Medida y Contacto
+Este núcleo gratuito fue desarrollado específicamente para **L2J Mobius Essence (RoseVain)**. Sin embargo, el código fue diseñado de forma universal.
+Trabajo de forma particular adaptando y configurando este sistema para **cualquier otro emulador, versión o crónica de servidor** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.).
+
+**¡Pide tu presupuesto sin cargo!** Si necesitas este sistema adaptado a tu servidor, o configuraciones y mods exclusivos, contáctame:
+* ✉️ **Correo:** [contacto@miacodeweb.com](mailto:contacto@miacodeweb.com)
+* 🌐 **Chat en vivo:** Comunícate directamente por el chat en nuestro sitio web [miacodeweb.com](https://miacodeweb.com)
+
 ### ☕ Soporte y Donaciones
-Este es un proyecto de código abierto mantenido por MiaCodeWeb. Siempre estoy trabajando para mejorarlo. Si este proyecto ayudó a tu servidor, ¡considera hacer una donación para mantener el desarrollo activo!
-* **Donar vía PayPal:** https://paypal.me/miacodeweb
-* **¿Necesitas configuraciones privadas o mods exclusivos?** Envíame un mensaje privado (PM) en el foro o en GitHub para contratar mis servicios como desarrollador freelance.
+Este proyecto es mantenido por MiaCodeWeb. Si este trabajo te fue de utilidad, ¡considera hacer una donación para mantener el desarrollo activo!
+
+https://paypal.me/miacodeweb
