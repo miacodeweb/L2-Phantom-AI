@@ -1,127 +1,197 @@
-# 🤖 L2 Phantom AI Manager by MiaCodeWeb
+# L2 Phantom AI Manager
 
 <p align="center">
-  <a href="#português-pt-br">Português (PT-BR)</a> • 
-  <a href="#english-en">English (EN)</a> • 
-  <a href="#español-es">Español (ES)</a>
+  <strong>Autonomous phantom players for L2J Mobius Essence RoseVain</strong><br>
+  Realistic AI-driven players that spawn, level, fight, chat, recover MP, and move through real datapack hunting zones.
+</p>
+
+<p align="center">
+  <a href="#português-pt-br">Português</a> ·
+  <a href="#english-en">English</a> ·
+  <a href="#español-es">Español</a>
 </p>
 
 ---
 
-<h2 id="português-pt-br">🇧🇷 Português (PT-BR)</h2>
+## Português (PT-BR)
 
-Um sistema avançado para criar **jogadores phantom com Inteligência Artificial (IA)** que evoluem e escalam dentro do jogo como se fossem jogadores reais. O sistema não apenas cria "bots de enfeite", mas entidades dinâmicas que farmam, sobem de nível, equipam itens e interagem através do chat usando a API do Google Gemini.
+### Visão Geral
 
-### 🌟 Key Features (Principais Recursos)
-* **Arquitetura Modular:** Código limpo e dividido em 4 arquivos independentes (`Manager`, `AI`, `Config`, `Chat`) para fácil manutenção e escalabilidade sem quebrar o núcleo.
-* **Geodata Inteligente & Ancoragem de NPCs:** Os phantoms "aprendem" o mapa lendo a memória do GeoEngine e clonando as coordenadas exatas dos NPCs reais. Isso garante aterragens 100% legais (Eixo Z perfeito) e evita que afundem no mapa.
-* **Progressão Realista:** Começam em zonas iniciais e progridem organicamente, trocando de equipamento (D, C, B, A, S) e de classe à medida que sobem de nível.
-* **Inteligência de Combate:** Escolhem alvos de forma inteligente (evitando Kill Steal), mantêm distanciamento social e recarregam Soulshots automaticamente.
-* **Chat IA Dinâmico & Eventos Sociais:** Integração nativa com Google Gemini 1.5. Os phantoms conversam no chat geral, saúdam jogadores próximos e respondem a mensagens privadas (`.pm`).
-* **Sistema de Logs TXT:** Inclui um modo `.pdebug` que registra os pensamentos e ações da IA em um arquivo `PhantomManager.txt` silencioso, sem inundar o console do GameServer.
+**L2 Phantom AI Manager** é um sistema modular para criar jogadores phantom autônomos em **L2J Mobius Essence RoseVain**. Os phantoms se comportam como jogadores reais: nascem em suas cidades de origem, se equipam, evoluem, procuram spots adequados ao level, fazem PvP, podem se tornar PK e interagem por chat.
 
-### 📥 Installation (Instalação)
-1. Copie os 4 arquivos Java (`PhantomManager.java`, `PhantomAI.java`, `PhantomConfig.java`, `PhantomChat.java`) para o diretório de scripts customizados do seu servidor (`data/scripts/custom/PhantomManager/`).
-2. Coloque o arquivo `PhantomPlayers.xml` na pasta `config/Custom/`.
-3. (Opcional) Edite o `PhantomChat.java` e insira sua API Key do Google Gemini para habilitar o Chat IA.
-4. Reinicie o servidor ou compile os scripts.
+### Recursos
 
-### 💻 Commands (Comandos)
-* **`.pstart`** / **`.pstop`** - Inicia ou para o sistema e os phantoms.
-* **`.pmenu`** - Abre o Painel de Controle HTML do Admin no jogo (com bypass nativo anti-bloqueio).
-* **`.pm [Nome] [Mensagem]`** - Envia uma mensagem privada para um phantom para testar a IA.
-* **`.pgo [Nome]` / `.pbring [Nome]` / `.pkill [Nome]`** - Comandos rápidos de controle de GM.
-* **`.pdebug`** - Liga/Desliga a gravação de ações no log de texto.
+- **Criação automática de phantoms:** crie grupos de 10 ou 50 phantoms pelo painel ou por comandos.
+- **Cidades de origem reais:** novos personagens usam `PlayerTemplate.getCreationPoint()`, respeitando classe e raça.
+- **Geodata segura:** todo spawn consulta `GeoEngine.getSpawnHeight()` e valida região do mundo antes de aparecer.
+- **Spots reais da datapack:** o sistema lê `data/stats/npcs` e `data/spawns` para montar spots de caça por level.
+- **Distribuição natural pelo mapa:** phantoms do mesmo level podem ir para spots diferentes, evitando concentração artificial.
+- **Progressão inteligente:** troca de classe, troca de equipamento por grade e reposição automática de shots.
+- **Combate com regras realistas:** evita mobs muito altos ou muito baixos e reduz disputa por alvo entre phantoms.
+- **Magos com modo repouso:** quando ficam sem MP, sentam e recuperam até 100%; em PvP, tentam fugir.
+- **PvP e PK:** alguns phantoms podem agir de forma agressiva e assumir comportamento PK.
+- **Chat com IA opcional:** integração com Google Gemini para respostas curtas e sociais.
+- **Logs de debug:** `.pdebug` grava ações em `log/PhantomManager.txt`.
 
-### 🛠️ Adaptações Sob Medida & Contato
-Este núcleo gratuito foi desenvolvido especificamente para **L2J Mobius Essence (RoseVain)**. No entanto, o código foi desenhado para ser universal. 
-Trabalho de maneira particular adaptando e configurando este sistema para **qualquer outro servidor, emulador ou crônica** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.).
+### Arquivos Principais
 
-**Faço orçamentos totalmente gratuitos!** Se você precisa deste sistema adaptado para o seu servidor, ou de configurações e mods exclusivos:
-* ✉️ **Email:** [contacto@miacodeweb.com](mailto:contacto@miacodeweb.com)
-* 🌐 **Chat ao vivo:** Fale comigo diretamente pelo chat em nosso site [miacodeweb.com](https://miacodeweb.com)
+- `PhantomManager.java` - comandos e bootstrap do sistema.
+- `PhantomEngine.java` - ciclo de vida, spawn, respawn e execução da IA.
+- `PhantomAI.java` - comportamento de farm, PvP, movimentação e recuperação de MP.
+- `PhantomConfig.java` - rotas base, equipamentos, shots e XML de phantoms.
+- `PhantomHuntingSpots.java` - leitura automática de spots reais da datapack.
+- `PhantomGeo.java` - validação de geodata e coordenadas seguras.
+- `PhantomFactory.java` - criação automática de personagens.
+- `PhantomChat.java` - mensagens e integração opcional com Gemini.
+- `PhantomMenu.java` / `PhantomHtml.java` - painel HTML de GM.
 
-### ☕ Suporte e Doações
-Este é um projeto mantido pela MiaCodeWeb. Se este projeto ajudou o seu servidor, considere fazer uma doação para manter o desenvolvimento ativo!
+### Instalação
 
-[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://paypal.me/miacodeweb)
+1. Copie a pasta `custom/PhantomManager` para:
+   `dist/game/data/scripts/custom/PhantomManager/`
+2. Coloque `PhantomPlayers.xml` em:
+   `dist/game/config/Custom/PhantomPlayers.xml`
+3. Compile os scripts ou reinicie o GameServer.
+4. Se quiser chat com IA, edite `PhantomChat.java` e configure sua chave do Google Gemini.
 
----
+### Comandos
 
-<h2 id="english-en">🇺🇸 English (EN)</h2>
+- `.pmenu` - abre o painel de controle.
+- `.pstart` - carrega phantoms salvos no XML.
+- `.pstop` - remove os phantoms ativos.
+- `.pload` - recarrega `PhantomPlayers.xml`.
+- `.pcreate 10` - cria e inicia 10 phantoms.
+- `.pcreate 50` - cria e inicia 50 phantoms.
+- `.pm Nome Mensagem` - envia mensagem privada para um phantom.
+- `.pdebug` - ativa/desativa logs.
 
-An advanced system to create **Artificial Intelligence (AI) phantom players** that scale and evolve within the game just like real human players. This system goes beyond visual "bots", providing dynamic entities that farm, level up, manage gear, and interact via chat using the Google Gemini API.
+### Observações
 
-### 🌟 Key Features
-* **Modular Architecture:** Clean codebase split into 4 independent files (`Manager`, `AI`, `Config`, `Chat`) for easy maintenance and scaling without breaking the core.
-* **Smart Geodata & NPC Anchoring:** Phantoms "learn" the map by reading the GeoEngine memory and cloning the exact coordinates of real NPCs. This guarantees 100% legal Z-axis landings and prevents them from falling through the floor.
-* **Realistic Progression:** Phantoms start in beginner zones and progress organically, changing gear grades (D, C, B, A, S) and classes as they level up.
-* **Combat Intelligence:** They pick targets smartly (Anti-KS), maintain social distancing, and auto-restock Soulshots.
-* **Dynamic AI Chat & Social Events:** Native integration with Google Gemini 1.5. Phantoms chat publicly, greet nearby players randomly, and reply to private messages (`.pm`).
-* **TXT Logging System:** Includes a `.pdebug` mode that tracks the AI's thoughts and actions into a silent `PhantomManager.txt` file, preventing GameServer console flood.
-
-### 📥 Installation
-1. Drop the 4 Java files (`PhantomManager.java`, `PhantomAI.java`, `PhantomConfig.java`, `PhantomChat.java`) into your custom scripts folder (`data/scripts/custom/PhantomManager/`).
-2. Place `PhantomPlayers.xml` inside `config/Custom/`.
-3. (Optional) Edit `PhantomChat.java` and insert your Google Gemini API Key for the AI engine.
-4. Restart the server or compile scripts.
-
-### 💻 Commands
-* **`.pstart`** / **`.pstop`** - Starts or stops the system and phantoms.
-* **`.pmenu`** - Opens the In-Game Admin HTML Control Panel (using native anti-block bypasses).
-* **`.pm [Name] [Message]`** - Send a private message to a phantom to test the AI.
-* **`.pgo [Name]` / `.pbring [Name]` / `.pkill [Name]`** - Quick GM control commands.
-* **`.pdebug`** - Toggles the TXT log recording on/off.
-
-### 🛠️ Custom Adaptations & Contact
-This free core was built specifically for **L2J Mobius Essence (RoseVain)**. However, the logic is universal.
-I work privately to adapt and configure this system for **any other server pack or chronicle** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.).
-
-**Get a free quote today!** If you need this system adapted to your server, or if you need private configurations and exclusive mods:
-* ✉️ **Email:** [contacto@miacodeweb.com](mailto:contacto@miacodeweb.com)
-* 🌐 **Live Chat:** Reach out directly via the live chat on our website [miacodeweb.com](https://miacodeweb.com)
-
-### ☕ Support & Donations
-This project is managed by MiaCodeWeb. If this project helped your server, please consider donating to keep the development active!
-
-[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://paypal.me/miacodeweb)
+Ao criar novos phantoms, eles aparecem primeiro em sua cidade de origem e aguardam brevemente antes de viajar para um spot de level. Isso ajuda a simular jogadores reais entrando no mundo.
 
 ---
 
-<h2 id="español-es">🇪🇸 Español (ES)</h2>
+## English (EN)
 
-Un sistema avanzado para crear **jugadores phantom con Inteligencia Artificial (IA)** que escalan y evolucionan dentro del juego como si fuesen jugadores reales. El sistema no crea "bots de adorno", sino entidades dinámicas que farmean, suben de nivel, equipan armaduras y conversan a través del chat usando la API de Google Gemini.
+### Overview
 
-### 🌟 Key Features (Características Principales)
-* **Arquitectura Modular:** Código limpio y dividido en 4 archivos independientes (`Manager`, `AI`, `Config`, `Chat`) para facilitar su mantenimiento y escalar funciones sin romper el núcleo.
-* **Geodata Inteligente y Anclaje a NPCs:** Los phantoms "aprenden" el mapa leyendo la memoria del motor GeoEngine y clonando las coordenadas exactas de los NPCs reales. Esto garantiza aterrizajes 100% legales (Eje Z perfecto) y evita que caigan al vacío.
-* **Progresión Realista:** Comienzan en zonas iniciales y progresan orgánicamente, cambiando de equipo (Grados D, C, B, A, S) y clase a medida que suben de nivel.
-* **Inteligencia de Combate:** Eligen objetivos inteligentemente (Anti-KS), mantienen distanciamiento social y recargan sus Soulshots automáticamente.
-* **Chat IA Dinámico y Eventos Sociales:** Integración nativa con Google Gemini 1.5. Los phantoms hablan por chat general, saludan aleatoriamente a los jugadores cercanos y responden mensajes privados (`.pm`).
-* **Sistema de Logs TXT:** Incluye un modo `.pdebug` que registra los pensamientos y acciones de la IA en un archivo `PhantomManager.txt` silencioso, evitando inundar la consola del GameServer.
+**L2 Phantom AI Manager** is a modular system for autonomous phantom players on **L2J Mobius Essence RoseVain**. Phantoms behave like real players: they spawn in their race/class origin towns, gear up, level, choose suitable hunting spots, fight, recover MP, engage in PvP, may become PK, and interact through chat.
 
-### 📥 Installation (Instalación)
-1. Copia los 4 archivos Java (`PhantomManager.java`, `PhantomAI.java`, `PhantomConfig.java`, `PhantomChat.java`) a la carpeta de scripts custom de tu servidor (`data/scripts/custom/PhantomManager/`).
-2. Coloca el archivo `PhantomPlayers.xml` dentro de `config/Custom/`.
-3. (Opcional) Edita el archivo `PhantomChat.java` y coloca tu API Key de Google Gemini para habilitar el Chat IA.
-4. Reinicia el servidor o compila los scripts.
+### Features
 
-### 💻 Commands (Comandos)
-* **`.pstart`** / **`.pstop`** - Inicia o detiene el sistema de phantoms.
-* **`.pmenu`** - Abre el Panel de Control HTML de Administrador (con bypasses nativos anti-bloqueo).
-* **`.pm [Nombre] [Mensaje]`** - Envía un mensaje privado a un phantom para poner a prueba la IA.
-* **`.pgo [Nombre]` / `.pbring [Nombre]` / `.pkill [Nombre]`** - Comandos rápidos de control de GM.
-* **`.pdebug`** - Activa o desactiva la generación del archivo de Logs TXT.
+- **Automatic phantom creation:** create groups of 10 or 50 phantoms from the panel or commands.
+- **Real origin towns:** new characters use `PlayerTemplate.getCreationPoint()`.
+- **Safe geodata spawning:** every spawn validates world regions and uses `GeoEngine.getSpawnHeight()`.
+- **Real datapack hunting spots:** the system reads `data/stats/npcs` and `data/spawns` to build level-based hunting locations.
+- **Natural map distribution:** phantoms of the same level can pick different valid spots.
+- **Smart progression:** class changes, gear grade upgrades, and automatic shot restocking.
+- **Realistic combat rules:** avoids mobs that are too high or too low and reduces target stealing.
+- **Mage rest mode:** mages sit to recover MP to 100%; during PvP, they try to run.
+- **PvP and PK behavior:** some phantoms can behave aggressively and become PK.
+- **Optional AI chat:** Google Gemini support for short, social replies.
+- **Debug logs:** `.pdebug` writes AI actions to `log/PhantomManager.txt`.
 
-### 🛠️ Adaptaciones a Medida y Contacto
-Este núcleo gratuito fue desarrollado específicamente para **L2J Mobius Essence (RoseVain)**. Sin embargo, el código fue diseñado de forma universal.
-Trabajo de forma particular adaptando y configurando este sistema para **cualquier otro emulador, versión o crónica de servidor** (L2jFrozen, aCis, Lucera, High Five, Interlude, etc.).
+### Main Files
 
-**¡Pide tu presupuesto sin cargo!** Si necesitas este sistema adaptado a tu servidor, o configuraciones y mods exclusivos, contáctame:
-* ✉️ **Correo:** [contacto@miacodeweb.com](mailto:contacto@miacodeweb.com)
-* 🌐 **Chat en vivo:** Comunícate directamente por el chat en nuestro sitio web [miacodeweb.com](https://miacodeweb.com)
+- `PhantomManager.java` - commands and system bootstrap.
+- `PhantomEngine.java` - lifecycle, spawn, respawn, and AI scheduling.
+- `PhantomAI.java` - farm, PvP, movement, and MP recovery behavior.
+- `PhantomConfig.java` - base routes, gear, shots, and XML config.
+- `PhantomHuntingSpots.java` - automatic datapack spot loader.
+- `PhantomGeo.java` - geodata-safe coordinate validation.
+- `PhantomFactory.java` - automatic character creation.
+- `PhantomChat.java` - messages and optional Gemini integration.
+- `PhantomMenu.java` / `PhantomHtml.java` - GM HTML panel.
 
-### ☕ Soporte y Donaciones
-Este proyecto es mantenido por MiaCodeWeb. Si este trabajo te fue de utilidad, ¡considera hacer una donación para mantener el desarrollo activo!
+### Installation
+
+1. Copy `custom/PhantomManager` into:
+   `dist/game/data/scripts/custom/PhantomManager/`
+2. Place `PhantomPlayers.xml` in:
+   `dist/game/config/Custom/PhantomPlayers.xml`
+3. Compile scripts or restart the GameServer.
+4. Optional: edit `PhantomChat.java` and set your Google Gemini API key.
+
+### Commands
+
+- `.pmenu` - opens the control panel.
+- `.pstart` - loads phantoms listed in XML.
+- `.pstop` - removes active phantoms.
+- `.pload` - reloads `PhantomPlayers.xml`.
+- `.pcreate 10` - creates and starts 10 phantoms.
+- `.pcreate 50` - creates and starts 50 phantoms.
+- `.pm Name Message` - sends a private message to a phantom.
+- `.pdebug` - toggles debug logging.
+
+### Notes
+
+Newly created phantoms appear in their origin town first, then wait briefly before moving to an appropriate hunting spot. This makes them look closer to real players entering the world.
+
+---
+
+## Español (ES)
+
+### Descripción
+
+**L2 Phantom AI Manager** es un sistema modular para crear jugadores phantom autónomos en **L2J Mobius Essence RoseVain**. Los phantoms actúan como jugadores reales: nacen en su ciudad de origen, se equipan, suben de nivel, buscan spots adecuados, hacen PvP, pueden volverse PK, recuperan MP y conversan por chat.
+
+### Características
+
+- **Creación automática de phantoms:** crea grupos de 10 o 50 desde el panel o por comando.
+- **Ciudades de origen reales:** los nuevos personajes usan `PlayerTemplate.getCreationPoint()`.
+- **Spawn seguro con geodata:** cada aparición valida región del mundo y usa `GeoEngine.getSpawnHeight()`.
+- **Spots reales de la datapack:** lee `data/stats/npcs` y `data/spawns` para construir zonas de leveo por nivel.
+- **Distribución natural en el mapa:** phantoms del mismo nivel pueden ir a spots distintos.
+- **Progresión inteligente:** cambio de clase, cambio de equipo por grado y recarga automática de shots.
+- **Combate realista:** evita mobs demasiado altos o demasiado bajos y reduce el kill steal entre phantoms.
+- **Magos con modo reposo:** cuando se quedan sin MP, se sientan hasta recuperar 100%; si están en PvP, intentan escapar.
+- **PvP y PK:** algunos phantoms pueden ser agresivos y convertirse en PK.
+- **Chat IA opcional:** integración con Google Gemini para respuestas cortas y sociales.
+- **Logs de debug:** `.pdebug` registra acciones en `log/PhantomManager.txt`.
+
+### Archivos Principales
+
+- `PhantomManager.java` - comandos e inicio del sistema.
+- `PhantomEngine.java` - ciclo de vida, spawn, respawn y ejecución de IA.
+- `PhantomAI.java` - farm, PvP, movimiento y recuperación de MP.
+- `PhantomConfig.java` - rutas base, equipos, shots y configuración XML.
+- `PhantomHuntingSpots.java` - cargador automático de spots desde la datapack.
+- `PhantomGeo.java` - validación segura de coordenadas con geodata.
+- `PhantomFactory.java` - creación automática de personajes.
+- `PhantomChat.java` - mensajes e integración opcional con Gemini.
+- `PhantomMenu.java` / `PhantomHtml.java` - panel HTML para GM.
+
+### Instalación
+
+1. Copia `custom/PhantomManager` en:
+   `dist/game/data/scripts/custom/PhantomManager/`
+2. Coloca `PhantomPlayers.xml` en:
+   `dist/game/config/Custom/PhantomPlayers.xml`
+3. Compila los scripts o reinicia el GameServer.
+4. Opcional: edita `PhantomChat.java` y coloca tu API key de Google Gemini.
+
+### Comandos
+
+- `.pmenu` - abre el panel de control.
+- `.pstart` - carga los phantoms del XML.
+- `.pstop` - remueve los phantoms activos.
+- `.pload` - recarga `PhantomPlayers.xml`.
+- `.pcreate 10` - crea e inicia 10 phantoms.
+- `.pcreate 50` - crea e inicia 50 phantoms.
+- `.pm Nombre Mensaje` - envía un mensaje privado a un phantom.
+- `.pdebug` - activa/desactiva logs.
+
+### Notas
+
+Los phantoms recién creados aparecen primero en su ciudad de origen y esperan brevemente antes de viajar a un spot de leveo acorde a su nivel. Esto hace que parezcan jugadores reales entrando al mundo.
+
+---
+
+## Contact
+
+Custom adaptations, private configurations, and ports to other chronicles are available through MiaCodeWeb.
+
+- Email: [contacto@miacodeweb.com](mailto:contacto@miacodeweb.com)
+- Website: [miacodeweb.com](https://miacodeweb.com)
 
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://paypal.me/miacodeweb)

@@ -126,6 +126,7 @@ public class PhantomConfig
 		ROUTES.add(new FarmZone(80, 85, 110000, 118000, -2500, 83400, 147943, -3404));
 		ROUTES.add(new FarmZone(85, 100, -55680, 136162, -2200, -13973, 122208, -3116));
 		loadXML();
+		PhantomHuntingSpots.load();
 	}
 	
 	public static void loadXML()
