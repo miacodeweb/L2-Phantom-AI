@@ -1,8 +1,11 @@
 package custom.PhantomManager;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -11,6 +14,7 @@ import org.w3c.dom.NodeList;
 
 public class PhantomConfig
 {
+	private static final String PHANTOM_XML_PATH = "config/Custom/PhantomPlayers.xml";
 	public static final List<Integer> PHANTOM_IDS = new ArrayList<>();
 	public static final List<FarmZone> ROUTES = new ArrayList<>();
 	
@@ -206,7 +210,7 @@ public class PhantomConfig
 		PHANTOM_IDS.clear();
 		try
 		{
-			File file = new File("config/Custom/PhantomPlayers.xml");
+			File file = new File(PHANTOM_XML_PATH);
 			if (!file.exists())
 			{
 				System.out.println(">>> [PHANTOM SYSTEM] ERROR: config/Custom/PhantomPlayers.xml NO ENCONTRADO.");
@@ -223,6 +227,50 @@ public class PhantomConfig
 		catch (Exception e)
 		{
 			System.out.println(">>> [PHANTOM SYSTEM] ERROR LEYENDO XML: " + e.getMessage());
+		}
+	}
+	
+	public static synchronized boolean addPhantomId(int charId)
+	{
+		if (PHANTOM_IDS.contains(charId))
+		{
+			return false;
+		}
+		
+		PHANTOM_IDS.add(charId);
+		saveXML();
+		return true;
+	}
+	
+	private static synchronized void saveXML()
+	{
+		try
+		{
+			File file = new File(PHANTOM_XML_PATH);
+			File parent = file.getParentFile();
+			if ((parent != null) && !parent.exists())
+			{
+				parent.mkdirs();
+			}
+			
+			Set<Integer> uniqueIds = new LinkedHashSet<>(PHANTOM_IDS);
+			try (FileWriter writer = new FileWriter(file, false))
+			{
+				writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+				writer.write("<list>\n");
+				for (int charId : uniqueIds)
+				{
+					writer.write("\t<phantom charId=\"" + charId + "\" />\n");
+				}
+				writer.write("</list>\n");
+			}
+			PHANTOM_IDS.clear();
+			PHANTOM_IDS.addAll(uniqueIds);
+			PhantomManager.logToFile("XML", "PhantomPlayers.xml actualizado. IDs=" + PHANTOM_IDS.size());
+		}
+		catch (Exception e)
+		{
+			PhantomManager.logToFile("XML", "No se pudo guardar PhantomPlayers.xml: " + e.getMessage());
 		}
 	}
 	

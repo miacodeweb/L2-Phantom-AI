@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 public class PhantomHuntingSpots
 {
 	private static final Map<Integer, Integer> NPC_LEVELS = new HashMap<>();
+	private static final Map<Integer, String> NPC_NAMES = new HashMap<>();
 	private static final Map<Integer, List<Location>> SPOTS_BY_LEVEL = new HashMap<>();
 	private static boolean _loaded = false;
 	
@@ -29,6 +30,7 @@ public class PhantomHuntingSpots
 		}
 		
 		NPC_LEVELS.clear();
+		NPC_NAMES.clear();
 		SPOTS_BY_LEVEL.clear();
 		loadNpcLevels(new File("data/stats/npcs"));
 		loadSpawnSpots(new File("data/spawns"));
@@ -61,10 +63,21 @@ public class PhantomHuntingSpots
 			return false;
 		}
 		
-		PhantomState.HUNT_LEVEL_BAND.put(objectId, band);
+		return travelToLevelSpot(bot, "Viajando a spot de leveo L" + bot.getLevel());
+	}
+	
+	public static boolean travelToLevelSpot(Player bot, String reason)
+	{
+		Location spot = getRandomSpot(bot.getLevel());
+		if (spot == null)
+		{
+			return false;
+		}
+		
+		PhantomState.HUNT_LEVEL_BAND.put(bot.getObjectId(), getLevelBand(bot.getLevel()));
 		Location safe = PhantomGeo.getNpcLikeSpawn(spot);
-		PhantomEngine.movePhantomTo(bot, safe, "Viajando a spot de leveo L" + bot.getLevel());
-		PhantomManager.logToFile(bot.getName(), "Viajando a spot de leveo L" + bot.getLevel() + ": " + safe.getX() + ", " + safe.getY() + ", " + safe.getZ());
+		PhantomEngine.movePhantomTo(bot, safe, reason);
+		PhantomManager.logToFile(bot.getName(), reason + ": " + safe.getX() + ", " + safe.getY() + ", " + safe.getZ());
 		return true;
 	}
 	
@@ -145,7 +158,13 @@ public class PhantomHuntingSpots
 				
 				int id = Integer.parseInt(npc.getAttribute("id"));
 				int level = Integer.parseInt(npc.getAttribute("level"));
+				String name = npc.getAttribute("name");
+				if (isForbiddenTargetName(name))
+				{
+					continue;
+				}
 				NPC_LEVELS.put(id, level);
+				NPC_NAMES.put(id, name);
 			}
 		}
 		catch (Exception e)
@@ -190,6 +209,10 @@ public class PhantomHuntingSpots
 				{
 					continue;
 				}
+				if (isForbiddenTargetName(NPC_NAMES.get(id)))
+				{
+					continue;
+				}
 				
 				int x = Integer.parseInt(npc.getAttribute("x"));
 				int y = Integer.parseInt(npc.getAttribute("y"));
@@ -205,5 +228,16 @@ public class PhantomHuntingSpots
 		{
 			PhantomManager.logToFile("SPOT_LOADER", "Error leyendo spawns " + file.getName() + ": " + e.getMessage());
 		}
+	}
+	
+	public static boolean isForbiddenTargetName(String name)
+	{
+		if (name == null)
+		{
+			return false;
+		}
+		
+		String lowerName = name.toLowerCase();
+		return lowerName.contains("training") || lowerName.contains("dummy") || lowerName.contains("practice") || lowerName.contains("tutorial") || lowerName.contains("event") || lowerName.contains("chest") || lowerName.contains("treasure box");
 	}
 }

@@ -17,22 +17,29 @@ public class PhantomEngine
 	
 	public static void startSystem(Player gm)
 	{
+		startBatch(10, gm);
+	}
+	
+	public static void startBatch(int count, Player gm)
+	{
 		if (isRunning)
 		{
-			if (gm != null)
-			{
-				gm.sendMessage("El sistema ya esta corriendo.");
-			}
-			return;
+			PhantomManager.logToFile("SYSTEM", "Sistema ya estaba corriendo. Agregando lote de " + count + ".");
 		}
-		
-		PhantomManager.startLogSession("PHANTOM_START");
-		isRunning = true;
+		else
+		{
+			PhantomManager.startLogSession("PHANTOM_START");
+			isRunning = true;
+		}
 		int loadedCount = 0;
-		PhantomManager.logToFile("SYSTEM", "Iniciando sistema con " + PhantomConfig.PHANTOM_IDS.size() + " IDs configurados.");
+		PhantomManager.logToFile("SYSTEM", "Iniciando lote de hasta " + count + " phantoms. IDs configurados=" + PhantomConfig.PHANTOM_IDS.size());
 		
 		for (int charId : PhantomConfig.PHANTOM_IDS)
 		{
+			if (loadedCount >= count)
+			{
+				break;
+			}
 			try
 			{
 				if (World.getInstance().getPlayer(charId) != null)
@@ -61,7 +68,8 @@ public class PhantomEngine
 		
 		if (gm != null)
 		{
-			gm.sendMessage(">>> Sistema INICIADO. Se cargaron " + loadedCount + " bots.");
+			gm.sendMessage(">>> Se iniciaron " + loadedCount + " phantoms en este lote.");
+			PhantomMenu.showMenu(gm);
 		}
 	}
 	
@@ -80,6 +88,7 @@ public class PhantomEngine
 			{
 				preparePhantom(phantom, true);
 				registerPhantom(phantom, Rnd.get(100) < 17, Rnd.get(100) < 6);
+				PhantomConfig.addPhantomId(phantom.getObjectId());
 				startPhantomAI(phantom);
 				PhantomManager.logToFile(phantom.getName(), "IA programada desde creacion. online=" + phantom.isOnline() + " spawned=" + phantom.isSpawned() + " loc=" + phantom.getX() + "," + phantom.getY() + "," + phantom.getZ());
 				createdCount++;
@@ -96,6 +105,37 @@ public class PhantomEngine
 			PhantomManager.logToFile("AUTO_CREATE", "Se crearon " + createdCount + " phantoms automaticos.");
 			PhantomMenu.showMenu(gm);
 		}
+	}
+	
+	public static int stopSome(int count, Player gm)
+	{
+		int stopped = 0;
+		for (Player p : activePhantoms)
+		{
+			if (stopped >= count)
+			{
+				break;
+			}
+			if (p != null)
+			{
+				PhantomManager.logToFile(p.getName(), "Desconectado por lote GM.");
+				PhantomState.unregister(p.getObjectId());
+				activePhantoms.remove(p);
+				p.deleteMe();
+				stopped++;
+			}
+		}
+		
+		if (activePhantoms.isEmpty())
+		{
+			isRunning = false;
+		}
+		if (gm != null)
+		{
+			gm.sendMessage("Se desconectaron " + stopped + " phantoms.");
+			PhantomMenu.showMenu(gm);
+		}
+		return stopped;
 	}
 	
 	public static void stopSystem(Player gm)

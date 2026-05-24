@@ -22,6 +22,8 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 		"pstart",
 		"pstop",
 		"pload",
+		"pcreate",
+		"pstop10",
 		"pm",
 		"pmenu",
 		"pdebug"
@@ -82,6 +84,11 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 	public static boolean toggleDebug()
 	{
 		_debugMode = !_debugMode;
+		return _debugMode;
+	}
+	
+	public static boolean isDebugMode()
+	{
 		return _debugMode;
 	}
 	
@@ -155,7 +162,7 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 	{
 		if (command.equalsIgnoreCase("pstart"))
 		{
-			PhantomEngine.startSystem(player);
+			PhantomEngine.startBatch(10, player);
 			return true;
 		}
 		else if (command.equalsIgnoreCase("pstop"))
@@ -163,10 +170,33 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 			PhantomEngine.stopSystem(player);
 			return true;
 		}
+		else if (command.equalsIgnoreCase("pstop10"))
+		{
+			PhantomEngine.stopSome(10, player);
+			return true;
+		}
 		else if (command.equalsIgnoreCase("pload"))
 		{
 			PhantomConfig.loadXML();
 			player.sendMessage("XML de Phantoms recargado.");
+			return true;
+		}
+		else if (command.equalsIgnoreCase("pcreate"))
+		{
+			int count = 10;
+			if ((target != null) && !target.trim().isEmpty())
+			{
+				try
+				{
+					count = Math.max(1, Math.min(100, Integer.parseInt(target.trim())));
+				}
+				catch (NumberFormatException e)
+				{
+					player.sendMessage("Uso: .pcreate 10");
+					return true;
+				}
+			}
+			PhantomEngine.createAndStart(count, player);
 			return true;
 		}
 		else if (command.equalsIgnoreCase("pm"))

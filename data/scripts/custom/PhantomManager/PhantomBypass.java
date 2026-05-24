@@ -10,6 +10,10 @@ public class PhantomBypass implements IBypassHandler
 	private static final PhantomBypass INSTANCE = new PhantomBypass();
 	private static final String[] COMMANDS =
 	{
+		"phantom_start_10",
+		"phantom_stop_10",
+		"phantom_stop_all",
+		"phantom_reload_xml",
 		"phantom_create_10",
 		"phantom_create_50",
 		"phantom_go",
@@ -47,6 +51,29 @@ public class PhantomBypass implements IBypassHandler
 			PhantomEngine.createAndStart(50, player);
 			return true;
 		}
+		else if (command.equals("phantom_start_10"))
+		{
+			PhantomEngine.startBatch(10, player);
+			return true;
+		}
+		else if (command.equals("phantom_stop_10"))
+		{
+			PhantomEngine.stopSome(10, player);
+			return true;
+		}
+		else if (command.equals("phantom_stop_all"))
+		{
+			PhantomEngine.stopSystem(player);
+			PhantomMenu.showMenu(player);
+			return true;
+		}
+		else if (command.equals("phantom_reload_xml"))
+		{
+			PhantomConfig.loadXML();
+			player.sendMessage("XML de Phantoms recargado.");
+			PhantomMenu.showMenu(player);
+			return true;
+		}
 		else if (command.startsWith("phantom_go "))
 		{
 			Player target = PhantomEngine.getPhantomByName(command.substring(11).trim());
@@ -82,6 +109,7 @@ public class PhantomBypass implements IBypassHandler
 		else if (command.equals("phantom_debug"))
 		{
 			player.sendMessage("Logs TXT: " + (PhantomManager.toggleDebug() ? "ENCENDIDO" : "APAGADO"));
+			PhantomMenu.showMenu(player);
 			return true;
 		}
 		else if (command.equals("phantom_menu"))
