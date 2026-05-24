@@ -63,8 +63,7 @@ public class PhantomHuntingSpots
 		
 		PhantomState.HUNT_LEVEL_BAND.put(objectId, band);
 		Location safe = PhantomGeo.getNpcLikeSpawn(spot);
-		bot.teleToLocation(safe.getX(), safe.getY(), safe.getZ());
-		bot.broadcastUserInfo();
+		PhantomEngine.movePhantomTo(bot, safe, "Viajando a spot de leveo L" + bot.getLevel());
 		PhantomManager.logToFile(bot.getName(), "Viajando a spot de leveo L" + bot.getLevel() + ": " + safe.getX() + ", " + safe.getY() + ", " + safe.getZ());
 		return true;
 	}

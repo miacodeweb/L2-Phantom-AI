@@ -7,6 +7,7 @@ import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.commons.util.Rnd;
 import org.l2jmobius.gameserver.model.Location;
 import org.l2jmobius.gameserver.model.World;
+import org.l2jmobius.gameserver.model.instancezone.Instance;
 import org.l2jmobius.gameserver.model.actor.Player;
 
 public class PhantomEngine
@@ -25,8 +26,10 @@ public class PhantomEngine
 			return;
 		}
 		
+		PhantomManager.startLogSession("PHANTOM_START");
 		isRunning = true;
 		int loadedCount = 0;
+		PhantomManager.logToFile("SYSTEM", "Iniciando sistema con " + PhantomConfig.PHANTOM_IDS.size() + " IDs configurados.");
 		
 		for (int charId : PhantomConfig.PHANTOM_IDS)
 		{
@@ -44,13 +47,14 @@ public class PhantomEngine
 				}
 				
 				preparePhantom(phantom, false);
-				registerPhantom(phantom, Rnd.get(100) < 20, Rnd.get(100) < 7);
+				registerPhantom(phantom, Rnd.get(100) < 10, Rnd.get(100) < 3);
 				startPhantomAI(phantom);
+				PhantomManager.logToFile(phantom.getName(), "IA programada desde XML. online=" + phantom.isOnline() + " spawned=" + phantom.isSpawned() + " loc=" + phantom.getX() + "," + phantom.getY() + "," + phantom.getZ());
 				loadedCount++;
 			}
 			catch (Exception e)
 			{
-				PhantomManager.logToFile("SPAWN", "Error al spawnear: " + e.getMessage());
+				PhantomManager.logException("SPAWN", "Error al spawnear charId " + charId, e);
 				e.printStackTrace();
 			}
 		}
@@ -63,6 +67,7 @@ public class PhantomEngine
 	
 	public static void createAndStart(int count, Player gm)
 	{
+		PhantomManager.startLogSession("PHANTOM_CREATE_" + count);
 		if (!isRunning)
 		{
 			isRunning = true;
@@ -74,13 +79,14 @@ public class PhantomEngine
 			try
 			{
 				preparePhantom(phantom, true);
-				registerPhantom(phantom, Rnd.get(100) < 35, Rnd.get(100) < 12);
+				registerPhantom(phantom, Rnd.get(100) < 17, Rnd.get(100) < 6);
 				startPhantomAI(phantom);
+				PhantomManager.logToFile(phantom.getName(), "IA programada desde creacion. online=" + phantom.isOnline() + " spawned=" + phantom.isSpawned() + " loc=" + phantom.getX() + "," + phantom.getY() + "," + phantom.getZ());
 				createdCount++;
 			}
 			catch (Exception e)
 			{
-				PhantomManager.logToFile("AUTO_SPAWN", "Error iniciando phantom: " + e.getMessage());
+				PhantomManager.logException("AUTO_SPAWN", "Error iniciando phantom", e);
 			}
 		}
 		
@@ -99,6 +105,7 @@ public class PhantomEngine
 			return;
 		}
 		
+		PhantomManager.logToFile("SYSTEM", "Deteniendo sistema. Phantoms activos=" + activePhantoms.size());
 		isRunning = false;
 		for (Player p : activePhantoms)
 		{
@@ -120,6 +127,41 @@ public class PhantomEngine
 	public static Player getPhantomByName(String name)
 	{
 		return activePhantoms.stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+	}
+	
+	public static void movePhantomTo(Player phantom, Location loc, String reason)
+	{
+		movePhantomTo(phantom, loc, null, reason);
+	}
+	
+	public static void movePhantomTo(Player phantom, Location loc, Instance instance, String reason)
+	{
+		if ((phantom == null) || (loc == null))
+		{
+			return;
+		}
+		
+		phantom.abortAttack();
+		phantom.abortCast();
+		phantom.setTarget(null);
+		phantom.setInstance(instance);
+		phantom.setInvisible(false);
+		phantom.setRunning();
+		phantom.setXYZ(loc.getX(), loc.getY(), loc.getZ());
+		if (loc.getHeading() != 0)
+		{
+			phantom.setHeading(loc.getHeading());
+		}
+		if (!phantom.isSpawned())
+		{
+			phantom.spawnMe(loc.getX(), loc.getY(), loc.getZ());
+		}
+		else
+		{
+			phantom.broadcastInfo();
+		}
+		phantom.broadcastUserInfo();
+		PhantomManager.logToFile(phantom.getName(), reason + ": " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + " spawned=" + phantom.isSpawned());
 	}
 	
 	private static void preparePhantom(Player phantom, boolean creationSpawn)
@@ -152,7 +194,7 @@ public class PhantomEngine
 		if (pkMode)
 		{
 			phantom.setPkKills(Math.max(1, phantom.getPkKills()));
-			phantom.setReputation(-Rnd.get(720, 7200));
+			phantom.setReputation(-Rnd.get(360, 3600));
 			phantom.updatePvpTitleAndColor(true);
 			phantom.broadcastReputation();
 			phantom.broadcastUserInfo();
@@ -183,7 +225,7 @@ public class PhantomEngine
 		
 		if (phantom.isSpawned())
 		{
-			phantom.teleToLocation(spawnX, spawnY, spawnZ);
+			movePhantomTo(phantom, new Location(spawnX, spawnY, spawnZ), "Reposicionado en spot NPC");
 		}
 		else
 		{
@@ -202,7 +244,7 @@ public class PhantomEngine
 		
 		if (phantom.isSpawned())
 		{
-			phantom.teleToLocation(spawnX, spawnY, spawnZ);
+			movePhantomTo(phantom, new Location(spawnX, spawnY, spawnZ), "Reposicionado en ciudad de origen");
 		}
 		else
 		{
@@ -217,7 +259,7 @@ public class PhantomEngine
 	{
 		Location point = phantom.getTemplate().getCreationPoint();
 		Location safe = PhantomGeo.getNpcLikeSpawn(point);
-		phantom.teleToLocation(safe.getX(), safe.getY(), safe.getZ());
+		movePhantomTo(phantom, safe, "Revive en ciudad de origen");
 		PhantomState.HUNT_LEVEL_BAND.put(phantom.getObjectId(), -1);
 		PhantomState.NEXT_HUNT_TELEPORT.put(phantom.getObjectId(), System.currentTimeMillis() + 30000L);
 	}
@@ -238,8 +280,14 @@ public class PhantomEngine
 			
 			try
 			{
-				if (bot.isOnline() && !bot.isDead())
+				if (!bot.isSpawned() && !bot.isDead())
 				{
+					PhantomManager.logToFile(bot.getName(), "IA detecto phantom sin spawn. Reposicionando.");
+					spawnPhantom(bot);
+				}
+				if (!bot.isDead())
+				{
+					traceAi(bot, "tick online=" + bot.isOnline() + " spawned=" + bot.isSpawned() + " moving=" + bot.isMoving() + " casting=" + bot.isCastingNow() + " attacking=" + bot.isAttackingNow() + " loc=" + bot.getX() + "," + bot.getY() + "," + bot.getZ());
 					PhantomEquipment.applyBasicBuffs(bot);
 					PhantomEquipment.checkProgression(bot);
 					PhantomEquipment.cleanInventory(bot);
@@ -276,7 +324,7 @@ public class PhantomEngine
 			}
 			catch (Exception e)
 			{
-				PhantomManager.logToFile(bot.getName(), "Error en bucle IA: " + e.getMessage());
+				PhantomManager.logException(bot.getName(), "Error en bucle IA", e);
 				e.printStackTrace();
 			}
 			finally
@@ -284,5 +332,16 @@ public class PhantomEngine
 				startPhantomAI(bot);
 			}
 		}, 4000);
+	}
+	
+	private static void traceAi(Player bot, String message)
+	{
+		long now = System.currentTimeMillis();
+		long last = PhantomState.LAST_AI_TRACE.getOrDefault(bot.getObjectId(), 0L);
+		if ((now - last) >= 15000L)
+		{
+			PhantomState.LAST_AI_TRACE.put(bot.getObjectId(), now);
+			PhantomManager.logToFile(bot.getName(), "AI " + message);
+		}
 	}
 }

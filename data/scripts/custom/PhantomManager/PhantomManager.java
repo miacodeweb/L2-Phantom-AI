@@ -3,6 +3,7 @@ package custom.PhantomManager;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -27,9 +28,11 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 	};
 	
 	private static boolean _debugMode = true;
+	private static String _sessionLogFile = "log/PhantomManager-session-pending.txt";
 	
 	public PhantomManager()
 	{
+		startLogSession("SERVER_START");
 		PhantomConfig.init();
 		VoicedCommandHandler.getInstance().registerHandler(this);
 		PhantomBypass.register();
@@ -37,6 +40,12 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 		System.out.println("##################################################");
 		System.out.println(">>> [PHANTOM SYSTEM] V32 - Arquitectura Modular");
 		System.out.println("##################################################");
+	}
+	
+	public static void startLogSession(String reason)
+	{
+		_sessionLogFile = "log/PhantomManager-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + ".txt";
+		logToFile("SYSTEM", "Nueva sesion de logs: " + reason);
 	}
 	
 	public static void logToFile(String botName, String action)
@@ -53,6 +62,21 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 		catch (IOException e)
 		{
 		}
+		try (FileWriter fw = new FileWriter(_sessionLogFile, true);
+			PrintWriter pw = new PrintWriter(fw))
+		{
+			pw.println("[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "] " + botName + ": " + action);
+		}
+		catch (IOException e)
+		{
+		}
+	}
+	
+	public static void logException(String botName, String action, Exception e)
+	{
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		logToFile(botName, action + ": " + e.getMessage() + System.lineSeparator() + sw);
 	}
 	
 	public static boolean toggleDebug()
@@ -88,8 +112,8 @@ public class PhantomManager extends Script implements IVoicedCommandHandler
 			Player p = PhantomEngine.getPhantomByName(targetName);
 			if (p != null)
 			{
-				p.teleToLocation(player.getLocation());
-				p.broadcastUserInfo();
+				PhantomEngine.movePhantomTo(p, new org.l2jmobius.gameserver.model.Location(player.getX(), player.getY(), player.getZ(), player.getHeading()), player.getInstanceWorld(), "Traido por GM");
+				player.sendMessage("Trajiste a " + p.getName() + ".");
 			}
 			else
 			{

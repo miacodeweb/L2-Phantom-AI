@@ -13,6 +13,7 @@ import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.actor.instance.Monster;
 import org.l2jmobius.gameserver.model.item.enums.ShotType;
 import org.l2jmobius.gameserver.model.skill.Skill;
+import org.l2jmobius.gameserver.util.LocationUtil;
 
 public class PhantomAI
 {
@@ -23,6 +24,7 @@ public class PhantomAI
 	{
 		if (handleMageMpRecovery(bot))
 		{
+			trace(bot, "modo reposo/escape por MP");
 			return;
 		}
 		
@@ -30,17 +32,20 @@ public class PhantomAI
 		
 		if (stuckCount >= 2)
 		{
+			trace(bot, "atascado, relocalizando");
 			relocateStuckBot(bot);
 			return;
 		}
 		
 		if (bot.isCastingNow() || bot.isAttackingNow() || bot.isMoving())
 		{
+			trace(bot, "ocupado: moving=" + bot.isMoving() + " casting=" + bot.isCastingNow() + " attacking=" + bot.isAttackingNow());
 			return;
 		}
 		
 		if (PhantomHuntingSpots.relocateForLevelIfNeeded(bot))
 		{
+			trace(bot, "teleport por rango de level");
 			return;
 		}
 		
@@ -49,6 +54,7 @@ public class PhantomAI
 		Player aggressor = findPvPAttacker(bot);
 		if (aggressor != null)
 		{
+			trace(bot, "defendiendo contra " + aggressor.getName());
 			bot.setTarget(aggressor);
 			executeAttackPlan(bot, aggressor);
 			return;
@@ -57,6 +63,7 @@ public class PhantomAI
 		Player victim = findAggressiveTarget(bot);
 		if (victim != null)
 		{
+			trace(bot, "objetivo PvP/PK " + victim.getName());
 			makePkIfNeeded(bot, victim);
 			bot.setTarget(victim);
 			executeAttackPlan(bot, victim);
@@ -72,6 +79,7 @@ public class PhantomAI
 			return;
 		}
 		
+		trace(bot, "sin objetivo, caminando");
 		wander(bot);
 	}
 	
@@ -132,14 +140,14 @@ public class PhantomAI
 		{
 			Location safe = PhantomGeo.getNpcLikeSpawn(anchor);
 			PhantomManager.logToFile(bot.getName(), "Viajando a anclaje de NPC: " + safe.getX() + ", " + safe.getY() + ", " + safe.getZ());
-			bot.teleToLocation(safe.getX(), safe.getY(), safe.getZ());
+			PhantomEngine.movePhantomTo(bot, safe, "Viajando a anclaje de NPC");
 		}
 		else
 		{
 			PhantomConfig.FarmZone zone = PhantomConfig.getIdealZone(bot.getLevel());
 			int safeZ = GeoEngine.getInstance().getHeight(zone.spotX, zone.spotY, zone.spotZ);
 			PhantomManager.logToFile(bot.getName(), "Calculando Z con GeoEngine: " + safeZ);
-			bot.teleToLocation(zone.spotX + Rnd.get(-100, 100), zone.spotY + Rnd.get(-100, 100), safeZ);
+			PhantomEngine.movePhantomTo(bot, new Location(zone.spotX + Rnd.get(-100, 100), zone.spotY + Rnd.get(-100, 100), safeZ), "Viajando a zona fallback");
 		}
 		bot.broadcastUserInfo();
 		PhantomState.STUCK_COUNTERS.put(bot.getObjectId(), 0);
@@ -172,12 +180,31 @@ public class PhantomAI
 	
 	private static Player findPvPAttacker(Player bot)
 	{
-		return World.getInstance().getVisibleObjectsInRange(bot, Player.class, 1500).stream().filter(p -> !p.isDead() && (p.getTarget() == bot) && (p.getPvpFlag() > 0) && !p.isGM()).findFirst().orElse(null);
+		for (Player p : World.getInstance().getVisibleObjectsInRange(bot, Player.class, 1500))
+		{
+			if ((p == bot) || p.isDead() || p.isGM() || (p.getTarget() != bot))
+			{
+				continue;
+			}
+			
+			if (PhantomEngine.activePhantoms.contains(p))
+			{
+				if (p.isAttackingNow() || p.isCastingNow() || PhantomState.isPk(p.getObjectId()))
+				{
+					return p;
+				}
+			}
+			else if (p.getPvpFlag() > 0)
+			{
+				return p;
+			}
+		}
+		return null;
 	}
 	
 	private static Player findAggressiveTarget(Player bot)
 	{
-		if (!PhantomState.isAggressive(bot.getObjectId()) || (Rnd.get(100) >= 12))
+		if (!PhantomState.isAggressive(bot.getObjectId()) || (Rnd.get(100) >= 6))
 		{
 			return null;
 		}
@@ -193,7 +220,7 @@ public class PhantomAI
 			return;
 		}
 		bot.setPkKills(Math.max(1, bot.getPkKills()));
-		bot.setReputation(-Rnd.get(720, 7200));
+		bot.setReputation(-Rnd.get(360, 3600));
 		bot.updatePvpTitleAndColor(true);
 		bot.broadcastReputation();
 		bot.broadcastUserInfo();
@@ -242,6 +269,11 @@ public class PhantomAI
 		}
 		
 		PhantomState.STUCK_COUNTERS.put(bot.getObjectId(), 0);
+		if (idealMobs.isEmpty() && backupMobs.isEmpty())
+		{
+			PhantomManager.logToFile(bot.getName(), "Hay mobs cerca, pero todos estan ocupados por otros phantoms.");
+			return null;
+		}
 		return !idealMobs.isEmpty() ? idealMobs.get(Rnd.get(idealMobs.size())) : (!backupMobs.isEmpty() ? backupMobs.get(Rnd.get(backupMobs.size())) : null);
 	}
 	
@@ -274,7 +306,9 @@ public class PhantomAI
 			newY += Rnd.get(-1500, 1500);
 		}
 		
-		bot.getAI().setIntention(Intention.MOVE_TO, new Location(newX, newY, GeoEngine.getInstance().getHeight(newX, newY, bot.getZ())));
+		Location destination = GeoEngine.getInstance().getValidLocation(bot.getX(), bot.getY(), bot.getZ(), newX, newY, GeoEngine.getInstance().getHeight(newX, newY, bot.getZ()), bot.getInstanceWorld());
+		PhantomManager.logToFile(bot.getName(), "Caminando a " + destination.getX() + ", " + destination.getY() + ", " + destination.getZ());
+		bot.getAI().setIntention(Intention.MOVE_TO, destination);
 	}
 	
 	private static void runAwayFrom(Player bot, Player danger)
@@ -289,7 +323,8 @@ public class PhantomAI
 		
 		int newX = bot.getX() + (dx > 0 ? 1400 : -1400);
 		int newY = bot.getY() + (dy > 0 ? 1400 : -1400);
-		bot.getAI().setIntention(Intention.MOVE_TO, new Location(newX, newY, GeoEngine.getInstance().getHeight(newX, newY, bot.getZ())));
+		Location destination = GeoEngine.getInstance().getValidLocation(bot.getX(), bot.getY(), bot.getZ(), newX, newY, GeoEngine.getInstance().getHeight(newX, newY, bot.getZ()), bot.getInstanceWorld());
+		bot.getAI().setIntention(Intention.MOVE_TO, destination);
 		PhantomManager.logToFile(bot.getName(), "Sin MP en PvP. Escapando de " + danger.getName());
 	}
 	
@@ -315,11 +350,32 @@ public class PhantomAI
 		
 		if (!offensiveSkills.isEmpty() && (bot.getCurrentMpPercent() > MP_REST_PERCENT) && (Rnd.get(100) < 30))
 		{
+			PhantomManager.logToFile(bot.getName(), "Casteando contra " + target.getName());
 			bot.getAI().setIntention(Intention.CAST, offensiveSkills.get(Rnd.get(offensiveSkills.size())), target);
 		}
-		else if (!bot.isMageClass())
+		else
 		{
-			bot.getAI().setIntention(Intention.ATTACK, target);
+			PhantomManager.logToFile(bot.getName(), "Ataque fisico contra " + target.getName());
+			int range = Math.max(80, bot.getPhysicalAttackRange());
+			if (LocationUtil.calculateDistance(bot, target, true, false) > (range + 40))
+			{
+				Location destination = GeoEngine.getInstance().getValidLocation(bot.getX(), bot.getY(), bot.getZ(), target.getX(), target.getY(), target.getZ(), bot.getInstanceWorld());
+				bot.getAI().setIntention(Intention.MOVE_TO, destination);
+				PhantomManager.logToFile(bot.getName(), "Se acerca a " + target.getName() + ": " + destination.getX() + ", " + destination.getY() + ", " + destination.getZ());
+				return;
+			}
+			bot.doAutoAttack(target);
+		}
+	}
+	
+	private static void trace(Player bot, String message)
+	{
+		long now = System.currentTimeMillis();
+		long last = PhantomState.LAST_AI_TRACE.getOrDefault(bot.getObjectId(), 0L);
+		if ((now - last) >= 15000L)
+		{
+			PhantomState.LAST_AI_TRACE.put(bot.getObjectId(), now);
+			PhantomManager.logToFile(bot.getName(), "AI " + message);
 		}
 	}
 }

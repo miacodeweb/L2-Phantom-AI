@@ -13,9 +13,11 @@ public class PhantomState
 	public static final Map<Integer, List<Location>> NPC_ANCHORS = new ConcurrentHashMap<>();
 	public static final Map<Integer, Boolean> MP_RECOVERY_STATE = new ConcurrentHashMap<>();
 	public static final Map<Integer, Integer> GEAR_GRADE = new ConcurrentHashMap<>();
+	public static final Map<Integer, Integer> GEAR_PACK = new ConcurrentHashMap<>();
 	public static final Map<Integer, Integer> STUCK_COUNTERS = new ConcurrentHashMap<>();
 	public static final Map<Integer, Integer> HUNT_LEVEL_BAND = new ConcurrentHashMap<>();
 	public static final Map<Integer, Long> NEXT_HUNT_TELEPORT = new ConcurrentHashMap<>();
+	public static final Map<Integer, Long> LAST_AI_TRACE = new ConcurrentHashMap<>();
 	public static final Set<Integer> AGGRESSIVE_PHANTOMS = ConcurrentHashMap.newKeySet();
 	public static final Set<Integer> PK_PHANTOMS = ConcurrentHashMap.newKeySet();
 	public static final Set<Integer> REVIVING_PHANTOMS = ConcurrentHashMap.newKeySet();
@@ -24,9 +26,11 @@ public class PhantomState
 	{
 		MP_RECOVERY_STATE.put(objectId, false);
 		GEAR_GRADE.put(objectId, -1);
+		GEAR_PACK.put(objectId, -1);
 		STUCK_COUNTERS.put(objectId, 0);
 		HUNT_LEVEL_BAND.put(objectId, -1);
 		NEXT_HUNT_TELEPORT.put(objectId, 0L);
+		LAST_AI_TRACE.put(objectId, 0L);
 		if (aggressive)
 		{
 			AGGRESSIVE_PHANTOMS.add(objectId);
@@ -41,9 +45,11 @@ public class PhantomState
 	{
 		MP_RECOVERY_STATE.remove(objectId);
 		GEAR_GRADE.remove(objectId);
+		GEAR_PACK.remove(objectId);
 		STUCK_COUNTERS.remove(objectId);
 		HUNT_LEVEL_BAND.remove(objectId);
 		NEXT_HUNT_TELEPORT.remove(objectId);
+		LAST_AI_TRACE.remove(objectId);
 		AGGRESSIVE_PHANTOMS.remove(objectId);
 		PK_PHANTOMS.remove(objectId);
 		REVIVING_PHANTOMS.remove(objectId);
@@ -53,9 +59,11 @@ public class PhantomState
 	{
 		MP_RECOVERY_STATE.clear();
 		GEAR_GRADE.clear();
+		GEAR_PACK.clear();
 		STUCK_COUNTERS.clear();
 		HUNT_LEVEL_BAND.clear();
 		NEXT_HUNT_TELEPORT.clear();
+		LAST_AI_TRACE.clear();
 		NPC_ANCHORS.clear();
 		AGGRESSIVE_PHANTOMS.clear();
 		PK_PHANTOMS.clear();

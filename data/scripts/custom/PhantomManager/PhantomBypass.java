@@ -61,8 +61,12 @@ public class PhantomBypass implements IBypassHandler
 			Player target = PhantomEngine.getPhantomByName(command.substring(14).trim());
 			if (target != null)
 			{
-				target.teleToLocation(player.getLocation());
-				target.broadcastUserInfo();
+				PhantomEngine.movePhantomTo(target, new org.l2jmobius.gameserver.model.Location(player.getX(), player.getY(), player.getZ(), player.getHeading()), player.getInstanceWorld(), "Traido por GM");
+				player.sendMessage("Trajiste a " + target.getName() + ".");
+			}
+			else
+			{
+				player.sendMessage("Phantom no encontrado.");
 			}
 			return true;
 		}

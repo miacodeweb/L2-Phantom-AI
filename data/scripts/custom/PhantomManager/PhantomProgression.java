@@ -40,7 +40,11 @@ public class PhantomProgression
 		if (targetGrade > PhantomState.GEAR_GRADE.getOrDefault(bot.getObjectId(), -1))
 		{
 			PhantomState.GEAR_GRADE.put(bot.getObjectId(), targetGrade);
-			int[] gearSet = bot.isMageClass() ? PhantomConfig.MAGE_GEAR[targetGrade] : PhantomConfig.FIGHTER_GEAR[targetGrade];
+			int[][] packs = bot.isMageClass() ? PhantomConfig.MAGE_GEAR_PACKS[targetGrade] : PhantomConfig.FIGHTER_GEAR_PACKS[targetGrade];
+			int packIndex = Rnd.get(packs.length);
+			PhantomState.GEAR_PACK.put(bot.getObjectId(), packIndex);
+			int[] gearSet = packs[packIndex];
+			PhantomManager.logToFile(bot.getName(), "Equipando pack " + (bot.isMageClass() ? "mago" : "guerrero") + " grado " + targetGrade + " variante " + packIndex);
 			for (int itemId : gearSet)
 			{
 				Item item = bot.getInventory().getItemByItemId(itemId);
@@ -48,7 +52,17 @@ public class PhantomProgression
 				{
 					item = bot.addItem(ItemProcessType.REWARD, itemId, 1L, bot, false);
 				}
-				if ((item != null) && !item.isEquipped())
+				if (item == null)
+				{
+					PhantomManager.logToFile(bot.getName(), "Item de pack no existe o no pudo agregarse: " + itemId);
+					continue;
+				}
+				if (!item.isEquipable())
+				{
+					PhantomManager.logToFile(bot.getName(), "Item de pack no equipable, omitido: " + itemId);
+					continue;
+				}
+				if (!item.isEquipped())
 				{
 					bot.getInventory().equipItem(item);
 				}
