@@ -13,6 +13,18 @@
 
 ---
 
+<p align="center"> 🌟 ¿Te ha servido este proyecto? / Did this project help you? / Este projeto te ajudou?
+
+Si este repositorio te ha sido de utilidad, ¡considera apoyarlo! Las **estrellas (Stars)** ayudan a que más desarrolladores encuentren esta herramienta y motivan a seguir mejorando el sistema de *Phantom Players*.</p>
+<p align="center">
+<a>* **ES:** Si te gusta el proyecto, por favor regálame una ⭐.</a>
+<a>* **EN:** If you find this project useful, please consider giving it a ⭐.</a>
+<a>* **PT:** Se este projeto for útil para você, por favor considere deixar uma ⭐.</a>
+
+<a>¡Gracias por tu apoyo! / Thanks for your support! / Obrigado pelo seu apoio!</p>
+
+---
+
 ## Portugues (PT-BR)
 
 ### Visao Geral
